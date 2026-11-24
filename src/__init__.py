@@ -1,3 +1,3 @@
-"""LyricForge YT - YouTube müzik videolarından otomatik şarkı sözü çıkarıcı ve çevirici."""
+"""LyricForge YT - YouTube müzik videolarından anlık şarkı sözü okuyucu ve çevirici."""
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

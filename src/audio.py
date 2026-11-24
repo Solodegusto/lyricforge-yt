@@ -12,6 +12,7 @@ class AudioDownloadError(Exception):
 def download_audio_temp(youtube_url: str) -> Tuple[str, str]:
     """
     Verilen YouTube URL'sinden ses dosyasını geçici bir dizine indirir.
+    İşlem sonrasında mutlaka silinmek üzere tasarlanmıştır.
 
     Returns:
         Tuple[str, str]: (indirilen_dosya_yolu, video_basligi)

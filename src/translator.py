@@ -14,7 +14,6 @@ def translate_segments(
 ) -> List[LyricSegment]:
     """
     Zaman damgalarını koruyarak şarkı sözü segmentlerini hedef dile ('tr', 'en', 'es') çevirir.
-    Satır bütünlüğünü korumak için özel ayırıcı ile toplu çeviri yapar; hata olursa satır satır dener.
     """
     if not segments:
         return []

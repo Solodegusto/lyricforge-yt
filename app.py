@@ -1,13 +1,6 @@
 import streamlit as st
 from src.audio import AudioDownloadError, cleanup_file, download_audio_temp
-from src.formatters import (
-    sanitize_filename,
-    to_bilingual_srt,
-    to_bilingual_txt,
-    to_lrc,
-    to_srt,
-    to_txt,
-)
+from src.formatters import to_bilingual_text, to_plain_text
 from src.i18n import TARGET_TRANSLATION_NAMES, UI_TEXTS
 from src.transcriber import TranscriptionError, transcribe_audio
 from src.translator import TranslationError, translate_segments
@@ -122,7 +115,6 @@ def main() -> None:
 
     if "lyric_result" in st.session_state:
         data = st.session_state["lyric_result"]
-        safe_name = sanitize_filename(data["title"])
         orig_segments = data["segments"]
 
         st.subheader(f"🎤 {data['title']}")
@@ -133,6 +125,9 @@ def main() -> None:
         col3.metric(t["metric_compute"], data["compute_type"])
 
         st.markdown(f"### {t['lyrics_header']}")
+        st.caption(t["copy_hint"])
+
+        show_ts = st.checkbox(t["show_timestamps"], value=False)
 
         tr_col1, tr_col2 = st.columns([3, 1])
         with tr_col1:
@@ -162,111 +157,29 @@ def main() -> None:
 
         tab1, tab2, tab3 = st.tabs([t["tab_original"], t["tab_translate"], t["tab_bilingual"]])
 
-        orig_txt = to_txt(orig_segments)
         with tab1:
-            st.text_area(
-                label="Original Lyrics",
-                value=orig_txt,
-                height=340,
-                label_visibility="collapsed",
+            st.code(
+                to_plain_text(orig_segments, include_timestamps=show_ts),
+                language=None,
             )
 
         with tab2:
             if has_translation and trans_segments:
-                st.text_area(
-                    label="Translated Lyrics",
-                    value=to_txt(trans_segments),
-                    height=340,
-                    label_visibility="collapsed",
+                st.code(
+                    to_plain_text(trans_segments, include_timestamps=show_ts),
+                    language=None,
                 )
             else:
                 st.info(f"👆 {t['translate_target_label']} → **{t['translate_btn']}**")
 
         with tab3:
             if has_translation and trans_segments:
-                st.text_area(
-                    label="Bilingual Lyrics",
-                    value=to_bilingual_txt(orig_segments, trans_segments),
-                    height=340,
-                    label_visibility="collapsed",
+                st.code(
+                    to_bilingual_text(orig_segments, trans_segments, include_timestamps=show_ts),
+                    language=None,
                 )
             else:
                 st.info(f"👆 {t['translate_target_label']} → **{t['translate_btn']}**")
-
-        st.markdown(f"### {t['download_header']}")
-        st.caption(t["dl_orig_section"])
-        d1, d2, d3 = st.columns(3)
-        with d1:
-            st.download_button(
-                label=t["dl_txt"],
-                data=orig_txt.encode("utf-8"),
-                file_name=f"{safe_name}.txt",
-                mime="text/plain; charset=utf-8",
-                use_container_width=True,
-            )
-        with d2:
-            st.download_button(
-                label=t["dl_srt"],
-                data=to_srt(orig_segments).encode("utf-8"),
-                file_name=f"{safe_name}.srt",
-                mime="application/x-subrip; charset=utf-8",
-                use_container_width=True,
-            )
-        with d3:
-            st.download_button(
-                label=t["dl_lrc"],
-                data=to_lrc(orig_segments, title=data["title"]).encode("utf-8"),
-                file_name=f"{safe_name}.lrc",
-                mime="text/plain; charset=utf-8",
-                use_container_width=True,
-            )
-
-        if has_translation and trans_segments:
-            st.caption(f"{t['dl_trans_section']} ({target_lang.upper()})")
-            td1, td2, td3 = st.columns(3)
-            with td1:
-                st.download_button(
-                    label=f"{t['dl_txt']} [{target_lang.upper()}]",
-                    data=to_txt(trans_segments).encode("utf-8"),
-                    file_name=f"{safe_name}_{target_lang}.txt",
-                    mime="text/plain; charset=utf-8",
-                    use_container_width=True,
-                )
-            with td2:
-                st.download_button(
-                    label=f"{t['dl_srt']} [{target_lang.upper()}]",
-                    data=to_srt(trans_segments).encode("utf-8"),
-                    file_name=f"{safe_name}_{target_lang}.srt",
-                    mime="application/x-subrip; charset=utf-8",
-                    use_container_width=True,
-                )
-            with td3:
-                st.download_button(
-                    label=f"{t['dl_lrc']} [{target_lang.upper()}]",
-                    data=to_lrc(trans_segments, title=f"{data['title']} ({target_lang.upper()})").encode("utf-8"),
-                    file_name=f"{safe_name}_{target_lang}.lrc",
-                    mime="text/plain; charset=utf-8",
-                    use_container_width=True,
-                )
-
-            st.caption(f"{t['dl_bi_section']} (ORIG + {target_lang.upper()})")
-            bd1, bd2 = st.columns(2)
-            with bd1:
-                st.download_button(
-                    label=f"{t['dl_txt']} [ORIG+{target_lang.upper()}]",
-                    data=to_bilingual_txt(orig_segments, trans_segments).encode("utf-8"),
-                    file_name=f"{safe_name}_bilingual_{target_lang}.txt",
-                    mime="text/plain; charset=utf-8",
-                    use_container_width=True,
-                )
-            with bd2:
-                st.download_button(
-                    label=f"{t['dl_srt']} [ORIG+{target_lang.upper()}]",
-                    data=to_bilingual_srt(orig_segments, trans_segments).encode("utf-8"),
-                    file_name=f"{safe_name}_bilingual_{target_lang}.srt",
-                    mime="application/x-subrip; charset=utf-8",
-                    use_container_width=True,
-                )
 
 
 if __name__ == "__main__":

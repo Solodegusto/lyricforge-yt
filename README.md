@@ -1,55 +1,19 @@
 # 🎵 LyricForge YT
 
-YouTube müzik videolarından `yt-dlp` ve `faster-whisper` kullanarak otomatik şarkı sözü çıkaran, **Türkçe / İngilizce / İspanyolca** arayüz ve şarkı sözü çevirisi sunan açık kaynaklı Streamlit uygulaması.
+Merak ettiğiniz şarkının YouTube bağlantısını yapıştırarak şarkı sözlerini ekranda okuyup **kopyalayabileceğiniz** ve **Türkçe / İngilizce / İspanyolca** dillerine çevirebileceğiniz açık kaynaklı Streamlit uygulaması. Dosya indirme yoktur; geçici ses verisi işlem sonunda otomatik silinir.
 
 ## ✨ Özellikler
 
-- **Tek Tıkla Çıkarma:** YouTube linkini yapıştırıp **Çıkar** butonuna basmanız yeterlidir.
-- **Çok Dilli Arayüz (TR / EN / ES):** Sol menüden tüm arayüzü anında **Türkçe**, **İngilizce** veya **İspanyolca** yapabilirsiniz.
-- **Zaman Damgalı Şarkı Sözü Çevirisi:** Çıkarılan sözleri **Türkçe (`tr`)**, **İngilizce (`en`)** veya **İspanyolca (`es`)** dillerine çevirir; zaman damgalarını koruyarak çeviri ve **iki dilli (Orijinal + Çeviri)** `.txt`, `.srt`, `.lrc` dosyaları oluşturur.
-- **Otomatik Dil Algılama:** Türkçe ve İngilizce başta olmak üzere onlarca dili otomatik tanır.
-- **GPU (CUDA) & CPU Optimizasyonu:** CUDA destekli GPU varsa `float16`, yalnızca CPU varsa `int8` hassasiyetiyle çalışır.
-- **Otomatik Temizlik:** İndirilen geçici ses dosyaları (`try/finally` bloğu ile) işlem bittiğinde diskten otomatik silinir.
+- **Anında Bak & Kopyala:** Dosya indirme butonları olmadan şarkı sözlerini doğrudan ekranda görüntüleyin ve tek tıkla kopyalayın.
+- **Çok Dilli Arayüz (TR / EN / ES):** Arayüzü **Türkçe**, **İngilizce** veya **İspanyolca** kullanın.
+- **Şarkı Sözü Çevirisi (TR / EN / ES):** Orijinal sözleri hedef dile çevirin ve **İki Dilli Görünüm** ile yan yana/alt alta inceleyin.
+- **Otomatik Dil Algılama & Donanım Optimizasyonu:** `faster-whisper` ile dili otomatik algılar; CUDA GPU varsa `float16`, CPU varsa `int8` kullanır.
+- **Otomatik Temizlik:** Geçici ses dosyası işlem bittiğinde otomatik olarak silinir.
 
-## 📁 Proje Yapısı
-
-```text
-lyricforge-yt/
-├── app.py
-├── requirements.txt
-├── README.md
-├── LICENSE
-├── .gitignore
-└── src/
-    ├── __init__.py
-    ├── audio.py
-    ├── transcriber.py
-    ├── translator.py
-    └── i18n.py
-```
-
-## 🛠️ Kurulum
-
-### 1. FFmpeg Kurulumu
-
-Ses dönüştürme işlemleri için sisteminizde **FFmpeg** kurulu olmalıdır:
-
-- **Windows (winget):**
-  ```powershell
-  winget install Gyan.FFmpeg
-  ```
-- **macOS (Homebrew):**
-  ```bash
-  brew install ffmpeg
-  ```
-- **Ubuntu / Debian:**
-  ```bash
-  sudo apt update && sudo apt install -y ffmpeg
-  ```
-
-### 2. Sanal Ortam ve Bağımlılıklar
+## 🛠️ Kurulum ve Çalıştırma
 
 ```bash
+# FFmpeg kurulu olmalıdır (Windows: winget install Gyan.FFmpeg | macOS: brew install ffmpeg | Ubuntu: sudo apt install -y ffmpeg)
 python -m venv .venv
 # Windows:
 .venv\Scripts\activate
@@ -58,12 +22,5 @@ source .venv/bin/activate
 
 pip install --upgrade pip
 pip install -r requirements.txt
-```
-
-## ▶️ Çalıştırma
-
-```bash
 streamlit run app.py
 ```
-
-Tarayıcınızda açılan `http://localhost:8501` adresinden uygulamayı kullanabilirsiniz.
